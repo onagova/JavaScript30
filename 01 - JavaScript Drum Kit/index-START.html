@@ -58,7 +58,30 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  window.addEventListener('keydown', playSound);
 
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(function (key) {
+    key.addEventListener('transitionend', removePlayingState);
+  });
+
+  function playSound(e) {
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+    
+    if (!audio) return;
+
+    audio.currentTime = 0; // can't play audio while it is playing, rewind audio file to the beginning to fix this
+    audio.play();
+    
+    key.classList.add('playing');
+  }
+
+  function removePlayingState(e) {
+    if (e.propertyName !== 'transform') return; // only remove when transform transition is finished
+    
+    this.classList.remove('playing'); // -this- is the object that call the function, in this case it's the transitionend listening key
+  }
 </script>
 
 
